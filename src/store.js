@@ -4,10 +4,16 @@ import { composeWithDevTools } from "redux-devtools-extension";
 
 //User Reducers
 import { userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
+import {
+  channelCreateReducer,
+  getChannelsReducer,
+} from "./reducers/channelReducers";
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
+  channelCreate: channelCreateReducer,
+  getChannels: getChannelsReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")
