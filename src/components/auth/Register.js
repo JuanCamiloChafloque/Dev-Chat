@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import md5 from "md5";
 import {
   createUserWithEmailAndPassword,
   getAuth,
   updateProfile,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 import {
@@ -19,6 +20,7 @@ import {
 
 const Register = () => {
   const auth = getAuth();
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -26,6 +28,14 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/");
+      }
+    });
+  }, [auth, navigate]);
 
   const registerHandler = async (e) => {
     e.preventDefault();

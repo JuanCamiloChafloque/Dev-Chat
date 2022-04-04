@@ -1,12 +1,10 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import md5 from "md5";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
-  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   getAuth,
-  updateProfile,
+  onAuthStateChanged,
 } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
 import {
   Grid,
   Form,
@@ -19,34 +17,34 @@ import {
 
 const Login = () => {
   const auth = getAuth();
+  const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const registerHandler = async (e) => {
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        navigate("/");
+      }
+    });
+  }, [auth, navigate]);
+
+  const loginHandler = async (e) => {
     e.preventDefault();
     if (isFormValid()) {
       setLoading(true);
-
       try {
-        const { user } = await createUserWithEmailAndPassword(
+        const { user } = await signInWithEmailAndPassword(
           auth,
           email,
           password
         );
-
-        await updateProfile(user, {
-          displayName: username,
-          photoURL:
-            "http://gravatar.com/avatar/" + md5(user.email) + "?d=identicon",
-        });
         setLoading(false);
         setErrors([]);
-        saveUser(user);
+        console.log(user);
       } catch (err) {
         setLoading(false);
         setErrors([err]);
@@ -54,44 +52,8 @@ const Login = () => {
     }
   };
 
-  const saveUser = (user) => {
-    const db = getDatabase();
-    set(ref(db, "users/" + user.uid), {
-      name: user.displayName,
-      avatar: user.photoURL,
-    });
-  };
-
   const isFormValid = () => {
-    if (isFormEmpty()) {
-      const error = { message: "Fill in all fields" };
-      setErrors([error]);
-      return false;
-    } else if (!isPasswordValid()) {
-      const error = { message: "Password is invalid" };
-      setErrors([error]);
-    } else {
-      return true;
-    }
-  };
-
-  const isFormEmpty = () => {
-    return (
-      !username.length ||
-      !email.length ||
-      !password.length ||
-      !confirmPassword.length
-    );
-  };
-
-  const isPasswordValid = () => {
-    if (password.length < 6 || confirmPassword < 6) {
-      return false;
-    } else if (password !== confirmPassword) {
-      return false;
-    } else {
-      return true;
-    }
+    return email.length && password.length;
   };
 
   const errorHandler = (input) => {
@@ -104,23 +66,12 @@ const Login = () => {
     <>
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h1" icon color="orange" textAlign="center">
-            <Icon name="puzzle piece" color="orange" />
-            Register for DevChat
+          <Header as="h1" icon color="violet" textAlign="center">
+            <Icon name="code branch" color="violet" />
+            Login to DevChat
           </Header>
-          <Form size="large" onSubmit={registerHandler}>
+          <Form size="large" onSubmit={loginHandler}>
             <Segment stacked>
-              <Form.Input
-                fluid
-                name="username"
-                type="text"
-                value={username}
-                icon="user"
-                iconPosition="left"
-                placeholder="Username"
-                onChange={(e) => setUsername(e.target.value)}
-                className={errorHandler("username")}
-              ></Form.Input>
               <Form.Input
                 fluid
                 name="email"
@@ -130,7 +81,7 @@ const Login = () => {
                 iconPosition="left"
                 placeholder="Email Address"
                 onChange={(e) => setEmail(e.target.value)}
-                className={errorHandler("email")}
+                className={errorHandler("user")}
               ></Form.Input>
               <Form.Input
                 fluid
@@ -143,25 +94,14 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className={errorHandler("password")}
               ></Form.Input>
-              <Form.Input
-                fluid
-                name="confirmpassword"
-                type="password"
-                value={confirmPassword}
-                icon="repeat"
-                iconPosition="left"
-                placeholder="Confirm Password"
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className={errorHandler("password")}
-              ></Form.Input>
               <Button
                 className={loading ? "loading" : ""}
                 disabled={loading}
-                color="orange"
+                color="violet"
                 fluid
                 size="large"
               >
-                Submit
+                Log In
               </Button>
             </Segment>
           </Form>
@@ -173,7 +113,7 @@ const Login = () => {
               </Message>
             ))}
           <Message>
-            Already a user? <Link to="/login">Sign in</Link>
+            Don't have an account? <Link to="/register">Register</Link>
           </Message>
         </Grid.Column>
       </Grid>
