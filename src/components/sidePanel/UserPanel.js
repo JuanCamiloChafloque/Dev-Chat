@@ -1,28 +1,20 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Dropdown, Grid, Header, Icon, Image } from "semantic-ui-react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../actions/userActions";
 
 const UserPanel = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
-
-  useEffect(() => {
-    if (!userInfo) {
-      navigate("/login");
-    }
-  }, [userInfo, navigate]);
 
   const dropdownOptions = () => [
     {
       key: "User",
       text: (
         <span>
-          Signed in as <strong>{userInfo.displayName}</strong>
+          Signed in as <strong>{userInfo && userInfo.displayName}</strong>
         </span>
       ),
       disabled: true,
@@ -54,8 +46,12 @@ const UserPanel = () => {
           <Dropdown
             trigger={
               <span>
-                <Image src={userInfo.photoURL} spaced="right" avatar />
-                {userInfo.displayName}
+                <Image
+                  src={userInfo && userInfo.photoURL}
+                  spaced="right"
+                  avatar
+                />
+                {userInfo && userInfo.displayName}
               </span>
             }
             options={dropdownOptions()}
