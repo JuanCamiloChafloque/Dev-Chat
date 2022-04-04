@@ -6,12 +6,14 @@ import {
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
   USER_REGISTER_FAIL,
+  USER_LOGOUT,
 } from "../constants/userConstants";
 import {
   signInWithEmailAndPassword,
   getAuth,
   createUserWithEmailAndPassword,
   updateProfile,
+  signOut,
 } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 
@@ -74,6 +76,15 @@ export const register = (username, email, password) => async (dispatch) => {
       payload: err.code,
     });
   }
+};
+
+export const logout = () => async (dispatch) => {
+  const auth = getAuth();
+  await signOut(auth);
+  localStorage.removeItem("userInfo");
+  dispatch({
+    type: USER_LOGOUT,
+  });
 };
 
 const saveUser = (user) => {

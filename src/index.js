@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import store from "./store";
 import App from "./App";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
@@ -9,9 +9,15 @@ import "./firebase";
 
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
+import Spinner from "./components/utils/Spinner";
 
 const Root = () => {
-  return (
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading } = userLogin;
+
+  return loading ? (
+    <Spinner />
+  ) : (
     <Router>
       <Routes>
         <Route exact path="/" element={<App />} />
