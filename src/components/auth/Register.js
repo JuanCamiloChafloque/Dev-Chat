@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import md5 from "md5";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
 import {
   Grid,
   Form,
@@ -21,24 +27,39 @@ const Register = () => {
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const registerHandler = (e) => {
+  const registerHandler = async (e) => {
     e.preventDefault();
     if (isFormValid()) {
       setLoading(true);
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((user) => {
-          setLoading(false);
-          setUsername("");
-          setEmail("");
-          setPassword("");
-          setConfirmPassword("");
-        })
-        .catch((err) => {
-          setLoading(false);
-          console.log(err);
-          setErrors([err]);
+
+      try {
+        const { user } = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        await updateProfile(user, {
+          displayName: username,
+          photoURL:
+            "http://gravatar.com/avatar/" + md5(user.email) + "?d=identicon",
         });
+        setLoading(false);
+        setErrors([]);
+        saveUser(user);
+      } catch (err) {
+        setLoading(false);
+        setErrors([err]);
+      }
     }
+  };
+
+  const saveUser = (user) => {
+    const db = getDatabase();
+    set(ref(db, "users/" + user.uid), {
+      name: user.displayName,
+      avatar: user.photoURL,
+    });
   };
 
   const isFormValid = () => {
@@ -83,7 +104,7 @@ const Register = () => {
     <>
       <Grid textAlign="center" verticalAlign="middle" className="app">
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h2" icon color="orange" textAlign="center">
+          <Header as="h1" icon color="orange" textAlign="center">
             <Icon name="puzzle piece" color="orange" />
             Register for DevChat
           </Header>
