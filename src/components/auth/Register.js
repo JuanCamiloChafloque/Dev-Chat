@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import md5 from "md5";
-import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  updateProfile,
-  onAuthStateChanged,
-} from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Grid,
   Form,
@@ -17,69 +10,44 @@ import {
   Button,
   Icon,
 } from "semantic-ui-react";
+import { register } from "../../actions/userActions";
 
 const Register = () => {
-  const auth = getAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errors, setErrors] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const userRegister = useSelector((state) => state.userRegister);
+  const { loading, error, userInfo } = userRegister;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo: userInfoLogin } = userLogin;
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate("/");
-      }
-    });
-  }, [auth, navigate]);
+    if (userInfo || userInfoLogin) {
+      navigate("/");
+    }
+  }, [userInfo, navigate, userInfoLogin]);
 
   const registerHandler = async (e) => {
     e.preventDefault();
+    setMessage(null);
     if (isFormValid()) {
-      setLoading(true);
-
-      try {
-        const { user } = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-        await updateProfile(user, {
-          displayName: username,
-          photoURL:
-            "http://gravatar.com/avatar/" + md5(user.email) + "?d=identicon",
-        });
-        setLoading(false);
-        setErrors([]);
-        saveUser(user);
-      } catch (err) {
-        setLoading(false);
-        setErrors([err]);
-      }
+      dispatch(register(username, email, password));
     }
-  };
-
-  const saveUser = (user) => {
-    const db = getDatabase();
-    set(ref(db, "users/" + user.uid), {
-      name: user.displayName,
-      avatar: user.photoURL,
-    });
   };
 
   const isFormValid = () => {
     if (isFormEmpty()) {
-      const error = { message: "Fill in all fields" };
-      setErrors([error]);
+      setMessage("Fill in all fields");
       return false;
     } else if (!isPasswordValid()) {
-      const error = { message: "Password is invalid" };
-      setErrors([error]);
+      setMessage("Password is invalid");
     } else {
       return true;
     }
@@ -104,12 +72,6 @@ const Register = () => {
     }
   };
 
-  const errorHandler = (input) => {
-    return errors.some((error) => error.message.toLowerCase().includes(input))
-      ? "error"
-      : "";
-  };
-
   return (
     <>
       <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -129,7 +91,6 @@ const Register = () => {
                 iconPosition="left"
                 placeholder="Username"
                 onChange={(e) => setUsername(e.target.value)}
-                className={errorHandler("username")}
               ></Form.Input>
               <Form.Input
                 fluid
@@ -140,7 +101,6 @@ const Register = () => {
                 iconPosition="left"
                 placeholder="Email Address"
                 onChange={(e) => setEmail(e.target.value)}
-                className={errorHandler("email")}
               ></Form.Input>
               <Form.Input
                 fluid
@@ -151,7 +111,6 @@ const Register = () => {
                 iconPosition="left"
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
-                className={errorHandler("password")}
               ></Form.Input>
               <Form.Input
                 fluid
@@ -162,7 +121,6 @@ const Register = () => {
                 iconPosition="left"
                 placeholder="Confirm Password"
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className={errorHandler("password")}
               ></Form.Input>
               <Button
                 className={loading ? "loading" : ""}
@@ -175,13 +133,18 @@ const Register = () => {
               </Button>
             </Segment>
           </Form>
-          {errors.length > 0 &&
-            errors.map((err, i) => (
-              <Message key={i} error>
-                <h3>Error</h3>
-                <p>{err.message}</p>
-              </Message>
-            ))}
+          {message && (
+            <Message error>
+              <h3>Error</h3>
+              <p>{message}</p>
+            </Message>
+          )}
+          {error && (
+            <Message error>
+              <h3>Error</h3>
+              <p>{error}</p>
+            </Message>
+          )}
           <Message>
             Already a user? <Link to="/login">Sign in</Link>
           </Message>

@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  signInWithEmailAndPassword,
-  getAuth,
-  onAuthStateChanged,
-} from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Grid,
   Form,
@@ -14,52 +10,37 @@ import {
   Button,
   Icon,
 } from "semantic-ui-react";
+import { login } from "../../actions/userActions";
 
 const Login = () => {
-  const auth = getAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading, error, userInfo } = userLogin;
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        navigate("/");
-      }
-    });
-  }, [auth, navigate]);
+    if (userInfo) {
+      navigate("/");
+    }
+  }, [userInfo, navigate]);
 
   const loginHandler = async (e) => {
     e.preventDefault();
+    setMessage(null);
     if (isFormValid()) {
-      setLoading(true);
-      try {
-        const { user } = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        setLoading(false);
-        setErrors([]);
-        console.log(user);
-      } catch (err) {
-        setLoading(false);
-        setErrors([err]);
-      }
+      dispatch(login(email, password));
+    } else {
+      setMessage("Authentication failed");
     }
   };
 
   const isFormValid = () => {
     return email.length && password.length;
-  };
-
-  const errorHandler = (input) => {
-    return errors.some((error) => error.message.toLowerCase().includes(input))
-      ? "error"
-      : "";
   };
 
   return (
@@ -81,7 +62,6 @@ const Login = () => {
                 iconPosition="left"
                 placeholder="Email Address"
                 onChange={(e) => setEmail(e.target.value)}
-                className={errorHandler("user")}
               ></Form.Input>
               <Form.Input
                 fluid
@@ -92,7 +72,6 @@ const Login = () => {
                 iconPosition="left"
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
-                className={errorHandler("password")}
               ></Form.Input>
               <Button
                 className={loading ? "loading" : ""}
@@ -105,13 +84,18 @@ const Login = () => {
               </Button>
             </Segment>
           </Form>
-          {errors.length > 0 &&
-            errors.map((err, i) => (
-              <Message key={i} error>
-                <h3>Error</h3>
-                <p>{err.message}</p>
-              </Message>
-            ))}
+          {message && (
+            <Message error>
+              <h3>Error</h3>
+              <p>{message}</p>
+            </Message>
+          )}
+          {error && (
+            <Message error>
+              <h3>Error</h3>
+              <p>{error}</p>
+            </Message>
+          )}
           <Message>
             Don't have an account? <Link to="/register">Register</Link>
           </Message>
