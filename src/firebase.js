@@ -1,7 +1,4 @@
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/storage";
-import "firebase/database";
+import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCfZp63wr_2VB0QmTTIPFxjNfgeP3m0WwQ",
@@ -13,6 +10,6 @@ const firebaseConfig = {
   measurementId: "G-9VHRH4SJGF",
 };
 
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-export default firebase;
+export default app;
