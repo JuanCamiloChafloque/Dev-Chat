@@ -9,7 +9,7 @@ import {
   GET_CURRENT_CHANNEL_REQUEST,
   GET_CURRENT_CHANNEL_SUCCESS,
 } from "../constants/channelConstants";
-import { getDatabase, ref, set, child, push, onValue } from "firebase/database";
+import { getDatabase, ref, set, child, push, get } from "firebase/database";
 
 export const createChannel =
   (name, details, username, avatar) => async (dispatch) => {
@@ -52,11 +52,11 @@ export const getAllChannels = () => async (dispatch) => {
     });
 
     let channels = [];
-    const db = getDatabase();
-    const channelRef = ref(db, "channels");
-    onValue(channelRef, (snapshot) => {
+    const dbRef = ref(getDatabase());
+    const snapshot = await get(child(dbRef, "channels/"));
+    if (snapshot.exists()) {
       channels = Object.keys(snapshot.val()).map((key) => snapshot.val()[key]);
-    });
+    }
 
     dispatch({
       type: GET_CHANNELS_SUCCESS,
@@ -77,11 +77,11 @@ export const getCurrentChannel = (id) => async (dispatch) => {
     });
 
     let channel;
-    const db = getDatabase();
-    const channelRef = ref(db, "channels/" + id);
-    onValue(channelRef, (snapshot) => {
+    const dbRef = ref(getDatabase());
+    const snapshot = await get(child(dbRef, "channels/" + id));
+    if (snapshot.exists()) {
       channel = snapshot.val();
-    });
+    }
 
     dispatch({
       type: GET_CURRENT_CHANNEL_SUCCESS,
