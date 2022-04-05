@@ -7,6 +7,7 @@ import { userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
 import {
   channelCreateReducer,
   getChannelsReducer,
+  getCurrentChannelReducer,
 } from "./reducers/channelReducers";
 
 const reducer = combineReducers({
@@ -14,6 +15,7 @@ const reducer = combineReducers({
   userRegister: userRegisterReducer,
   channelCreate: channelCreateReducer,
   getChannels: getChannelsReducer,
+  currentChannel: getCurrentChannelReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

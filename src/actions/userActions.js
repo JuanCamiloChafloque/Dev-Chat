@@ -9,6 +9,10 @@ import {
   USER_LOGOUT,
 } from "../constants/userConstants";
 import {
+  GET_CHANNELS_CLEAR,
+  GET_CURRENT_CHANNEL_CLEAR,
+} from "../constants/channelConstants";
+import {
   signInWithEmailAndPassword,
   getAuth,
   createUserWithEmailAndPassword,
@@ -84,6 +88,12 @@ export const logout = () => async (dispatch) => {
   localStorage.removeItem("userInfo");
   dispatch({
     type: USER_LOGOUT,
+  });
+  dispatch({
+    type: GET_CHANNELS_CLEAR,
+  });
+  dispatch({
+    type: GET_CURRENT_CHANNEL_CLEAR,
   });
 };
 

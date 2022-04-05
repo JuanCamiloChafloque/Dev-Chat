@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Icon, Menu, Modal, Form, Input, Button } from "semantic-ui-react";
 import { useSelector, useDispatch } from "react-redux";
-import { createChannel } from "../../actions/channelActions";
+import {
+  createChannel,
+  getAllChannels,
+  getCurrentChannel,
+} from "../../actions/channelActions";
 
 const Channels = () => {
   const dispatch = useDispatch();
 
-  const [channels, setChannels] = useState([]);
   const [modal, setModal] = useState(false);
   const [channelName, setChannelName] = useState("");
   const [channelDetails, setChannelDetails] = useState("");
@@ -18,13 +21,15 @@ const Channels = () => {
   const { success } = channelCreate;
 
   const getChannels = useSelector((state) => state.getChannels);
-  const { channels: fbChannels } = getChannels;
+  const { channels } = getChannels;
 
   useEffect(() => {
-    if (fbChannels) {
-      setChannels(fbChannels);
-    }
-  }, [fbChannels, success]);
+    dispatch(getAllChannels());
+  }, [dispatch, success]);
+
+  const currentChannelHandler = (id) => {
+    dispatch(getCurrentChannel(id));
+  };
 
   const createChannelHandler = (e) => {
     e.preventDefault();
@@ -54,6 +59,17 @@ const Channels = () => {
           </span>{" "}
           ({channels.length}) <Icon name="add" onClick={() => setModal(true)} />
         </Menu.Item>
+        {channels.length > 0 &&
+          channels.map((channel) => (
+            <Menu.Item
+              key={channel.id}
+              onClick={() => currentChannelHandler(channel.id)}
+              name={channel.name}
+              style={{ opacity: 0.7 }}
+            >
+              # {channel.name}
+            </Menu.Item>
+          ))}
       </Menu.Menu>
 
       <Modal basic open={modal} onClose={() => setModal(false)}>
