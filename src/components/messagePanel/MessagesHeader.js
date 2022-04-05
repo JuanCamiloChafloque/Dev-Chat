@@ -1,19 +1,34 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
 import { Header, Segment, Input, Icon } from "semantic-ui-react";
 
-const MessagesHeader = () => {
-  const currentChannel = useSelector((state) => state.currentChannel);
-  const { channel } = currentChannel;
+const MessagesHeader = ({ channel, messages }) => {
+  const [users, setUsers] = useState(0);
+
+  useEffect(() => {
+    const countUsers = () => {
+      if (messages && messages.length > 0) {
+        const num = messages.reduce((acc, message) => {
+          if (!acc.includes(message.user.name)) {
+            acc.push(message.user.name);
+          }
+          return acc;
+        }, []);
+        setUsers(num.length);
+      } else {
+        setUsers(0);
+      }
+    };
+    countUsers();
+  }, [messages]);
 
   return (
     <Segment clearing>
       <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
         <span>
-          {channel ? channel.name : ""}
+          {channel ? "#" + channel.name : ""}
           <Icon name={"star outline"} color="black" />
         </span>
-        <Header.Subheader>2 users</Header.Subheader>
+        <Header.Subheader>{users} users</Header.Subheader>
       </Header>
       <Header floated="right">
         <Input

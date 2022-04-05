@@ -16,7 +16,7 @@ const MessagePanel = () => {
   const { channel } = currentChannel;
 
   const channelMessages = useSelector((state) => state.channelMessages);
-  const { messages } = channelMessages;
+  const { loading, messages } = channelMessages;
 
   const messageCreate = useSelector((state) => state.messageCreate);
   const { success } = messageCreate;
@@ -29,7 +29,10 @@ const MessagePanel = () => {
 
   return (
     <>
-      <MessagesHeader />
+      <MessagesHeader
+        channel={channel && channel}
+        messages={messages && messages}
+      />
       <Segment>
         <Comment.Group className="messages">
           {userInfo &&
@@ -40,11 +43,15 @@ const MessagePanel = () => {
                 key={message.timestamp}
                 message={message}
                 user={userInfo}
+                loading={loading}
               />
             ))}
         </Comment.Group>
       </Segment>
-      <MessageForm />
+      <MessageForm
+        channel={channel && channel}
+        userInfo={userInfo && userInfo}
+      />
     </>
   );
 };

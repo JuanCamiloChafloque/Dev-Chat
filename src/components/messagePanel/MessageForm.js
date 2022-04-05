@@ -1,21 +1,15 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Segment, Button, Input } from "semantic-ui-react";
 import { createMessage } from "../../actions/messageActions";
 import FileModal from "./FileModal";
 
-const MessageForm = () => {
+const MessageForm = ({ channel, userInfo }) => {
   const dispatch = useDispatch();
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState(null);
   const [modal, setModal] = useState(false);
-
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
-  const currentChannel = useSelector((state) => state.currentChannel);
-  const { channel } = currentChannel;
 
   const sendMessageHandler = () => {
     if (channel && userInfo && message) {
