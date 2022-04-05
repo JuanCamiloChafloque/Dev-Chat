@@ -9,7 +9,10 @@ import {
   getChannelsReducer,
   getCurrentChannelReducer,
 } from "./reducers/channelReducers";
-import { messageCreateReducer } from "./reducers/messageReducers";
+import {
+  messageCreateReducer,
+  getChannelMessagesReducer,
+} from "./reducers/messageReducers";
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -18,6 +21,7 @@ const reducer = combineReducers({
   getChannels: getChannelsReducer,
   currentChannel: getCurrentChannelReducer,
   messageCreate: messageCreateReducer,
+  channelMessages: getChannelMessagesReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

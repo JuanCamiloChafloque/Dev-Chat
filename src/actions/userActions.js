@@ -12,6 +12,7 @@ import {
   GET_CHANNELS_CLEAR,
   GET_CURRENT_CHANNEL_CLEAR,
 } from "../constants/channelConstants";
+import { GET_MESSAGES_FROM_CHANNEL_CLEAR } from "../constants/messageConstants";
 import {
   signInWithEmailAndPassword,
   getAuth,
@@ -94,6 +95,9 @@ export const logout = () => async (dispatch) => {
   });
   dispatch({
     type: GET_CURRENT_CHANNEL_CLEAR,
+  });
+  dispatch({
+    type: GET_MESSAGES_FROM_CHANNEL_CLEAR,
   });
 };
 

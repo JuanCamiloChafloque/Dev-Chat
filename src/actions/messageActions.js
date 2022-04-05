@@ -2,6 +2,9 @@ import {
   CREATE_MESSAGE_FAIL,
   CREATE_MESSAGE_REQUEST,
   CREATE_MESSAGE_SUCCESS,
+  GET_MESSAGES_FROM_CHANNEL_FAIL,
+  GET_MESSAGES_FROM_CHANNEL_REQUEST,
+  GET_MESSAGES_FROM_CHANNEL_SUCCESS,
 } from "../constants/messageConstants";
 import {
   getDatabase,
@@ -41,6 +44,32 @@ export const createMessage = (channelId, content, user) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: CREATE_MESSAGE_FAIL,
+      payload: err.code,
+    });
+  }
+};
+
+export const getChannelMessages = (channelId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: GET_MESSAGES_FROM_CHANNEL_REQUEST,
+    });
+
+    let messages = [];
+    const dbRef = ref(getDatabase());
+    const snapshot = await get(child(dbRef, "messages/" + channelId));
+    console.log(snapshot.val());
+    if (snapshot.exists()) {
+      messages = Object.keys(snapshot.val()).map((key) => snapshot.val()[key]);
+    }
+
+    dispatch({
+      type: GET_MESSAGES_FROM_CHANNEL_SUCCESS,
+      payload: messages,
+    });
+  } catch (err) {
+    dispatch({
+      type: GET_MESSAGES_FROM_CHANNEL_FAIL,
       payload: err.code,
     });
   }
