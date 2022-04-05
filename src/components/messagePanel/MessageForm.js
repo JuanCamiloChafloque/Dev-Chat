@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Segment, Button, Input } from "semantic-ui-react";
 import { createMessage } from "../../actions/messageActions";
+import FileModal from "./FileModal";
 
 const MessageForm = () => {
   const dispatch = useDispatch();
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState(null);
+  const [modal, setModal] = useState(false);
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -56,7 +58,9 @@ const MessageForm = () => {
           content="Upload Media"
           labelPosition="right"
           icon="cloud upload"
+          onClick={() => setModal(true)}
         />
+        <FileModal modal={modal} closeModal={() => setModal(false)} />
       </Button.Group>
     </Segment>
   );

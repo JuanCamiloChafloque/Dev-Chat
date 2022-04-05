@@ -16,7 +16,7 @@ const MessagePanel = () => {
   const { channel } = currentChannel;
 
   const channelMessages = useSelector((state) => state.channelMessages);
-  const { loading, messages } = channelMessages;
+  const { messages } = channelMessages;
 
   const messageCreate = useSelector((state) => state.messageCreate);
   const { success } = messageCreate;
