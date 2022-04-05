@@ -16,38 +16,45 @@ import {
   serverTimestamp,
 } from "firebase/database";
 
-export const createMessage = (channelId, content, user) => async (dispatch) => {
-  try {
-    dispatch({
-      type: CREATE_MESSAGE_REQUEST,
-    });
+export const createMessage =
+  (channelId, content, user, fileUrl = null) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: CREATE_MESSAGE_REQUEST,
+      });
 
-    const db = getDatabase();
-    const key = push(child(ref(db), "messages/" + channelId)).key;
+      const db = getDatabase();
+      const key = push(child(ref(db), "messages/" + channelId)).key;
 
-    const newMessage = {
-      content: content,
-      timestamp: serverTimestamp(),
-      user: {
-        id: user.uid,
-        name: user.displayName,
-        avatar: user.photoURL,
-      },
-    };
+      const newMessage = {
+        timestamp: serverTimestamp(),
+        user: {
+          id: user.uid,
+          name: user.displayName,
+          avatar: user.photoURL,
+        },
+      };
 
-    await set(ref(db, "messages/" + channelId + "/" + key), newMessage);
+      if (fileUrl !== null) {
+        newMessage["image"] = fileUrl;
+      } else {
+        newMessage["content"] = content;
+      }
 
-    dispatch({
-      type: CREATE_MESSAGE_SUCCESS,
-      payload: true,
-    });
-  } catch (err) {
-    dispatch({
-      type: CREATE_MESSAGE_FAIL,
-      payload: err.code,
-    });
-  }
-};
+      await set(ref(db, "messages/" + channelId + "/" + key), newMessage);
+
+      dispatch({
+        type: CREATE_MESSAGE_SUCCESS,
+        payload: true,
+      });
+    } catch (err) {
+      dispatch({
+        type: CREATE_MESSAGE_FAIL,
+        payload: err.code,
+      });
+    }
+  };
 
 export const getChannelMessages = (channelId) => async (dispatch) => {
   try {

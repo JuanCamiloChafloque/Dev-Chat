@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { Comment } from "semantic-ui-react";
+import { Comment, Image } from "semantic-ui-react";
 
 const Message = ({ message, user }) => {
   return (
@@ -13,7 +13,10 @@ const Message = ({ message, user }) => {
         <Comment.Metadata>
           {moment(message.timestamp).fromNow()}
         </Comment.Metadata>
-        <Comment.Text>{message.content}</Comment.Text>
+        <Comment.Text>{message.content && message.content}</Comment.Text>
+        {message.image && (
+          <Image src={message.image} className="message__image" />
+        )}
       </Comment.Content>
     </Comment>
   );

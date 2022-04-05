@@ -60,7 +60,12 @@ const MessageForm = () => {
           icon="cloud upload"
           onClick={() => setModal(true)}
         />
-        <FileModal modal={modal} closeModal={() => setModal(false)} />
+        <FileModal
+          modal={modal}
+          closeModal={() => setModal(false)}
+          channel={channel && channel.id}
+          user={userInfo && userInfo}
+        />
       </Button.Group>
     </Segment>
   );
