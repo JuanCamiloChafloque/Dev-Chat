@@ -58,7 +58,6 @@ export const getChannelMessages = (channelId) => async (dispatch) => {
     let messages = [];
     const dbRef = ref(getDatabase());
     const snapshot = await get(child(dbRef, "messages/" + channelId));
-    console.log(snapshot.val());
     if (snapshot.exists()) {
       messages = Object.keys(snapshot.val()).map((key) => snapshot.val()[key]);
     }
