@@ -1,16 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Segment, Button, Input } from "semantic-ui-react";
+import { createMessage } from "../../actions/messageActions";
 
 const MessageForm = () => {
+  const dispatch = useDispatch();
+
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState(null);
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const currentChannel = useSelector((state) => state.currentChannel);
+  const { channel } = currentChannel;
+
+  const sendMessageHandler = () => {
+    if (channel && userInfo && message) {
+      dispatch(createMessage(channel.id, message, userInfo));
+      setError(null);
+    } else {
+      if (!channel) {
+        setError("Could not send message. Select a channel");
+      }
+      if (!message) {
+        setError("Could not send message. Message content is empty");
+      }
+    }
+    setMessage("");
+  };
+
   return (
     <Segment className="message__form">
       <Input
         fluid
         name="message"
+        value={message}
         style={{ marginBottom: "0.7em" }}
         label={<Button icon={"add"} />}
         labelPosition="left"
-        placeholder="Write your message"
+        placeholder={error ? error : "Write your message"}
+        onChange={(e) => setMessage(e.target.value)}
+        className={error ? "error" : ""}
       />
       <Button.Group icon widths="2">
         <Button
@@ -18,6 +49,7 @@ const MessageForm = () => {
           content="Add reply"
           labelPosition="left"
           icon="edit"
+          onClick={sendMessageHandler}
         />
         <Button
           color="teal"
