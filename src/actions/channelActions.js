@@ -83,8 +83,6 @@ export const getCurrentChannel = (id) => async (dispatch) => {
       channel = snapshot.val();
     });
 
-    console.log(channel);
-
     dispatch({
       type: GET_CURRENT_CHANNEL_SUCCESS,
       payload: channel,

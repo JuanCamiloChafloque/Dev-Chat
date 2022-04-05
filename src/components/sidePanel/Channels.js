@@ -23,6 +23,9 @@ const Channels = () => {
   const getChannels = useSelector((state) => state.getChannels);
   const { channels } = getChannels;
 
+  const currentChannel = useSelector((state) => state.currentChannel);
+  const { channel } = currentChannel;
+
   useEffect(() => {
     dispatch(getAllChannels());
   }, [dispatch, success]);
@@ -60,14 +63,15 @@ const Channels = () => {
           ({channels.length}) <Icon name="add" onClick={() => setModal(true)} />
         </Menu.Item>
         {channels.length > 0 &&
-          channels.map((channel) => (
+          channels.map((chan) => (
             <Menu.Item
-              key={channel.id}
-              onClick={() => currentChannelHandler(channel.id)}
-              name={channel.name}
+              key={chan.id}
+              onClick={() => currentChannelHandler(chan.id)}
+              name={chan.name}
               style={{ opacity: 0.7 }}
+              active={channel && channel.id === chan.id}
             >
-              # {channel.name}
+              # {chan.name}
             </Menu.Item>
           ))}
       </Menu.Menu>
