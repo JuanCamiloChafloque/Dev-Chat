@@ -7,6 +7,8 @@ import {
   GET_CHANNELS_SUCCESS,
   GET_CURRENT_CHANNEL_FAIL,
   GET_CURRENT_CHANNEL_REQUEST,
+  GET_CURRENT_CHANNEL_SET_PRIVATE,
+  GET_CURRENT_CHANNEL_SET_PUBLIC,
   GET_CURRENT_CHANNEL_SUCCESS,
 } from "../constants/channelConstants";
 import { getDatabase, ref, set, child, push, get } from "firebase/database";
@@ -45,6 +47,35 @@ export const createChannel =
     }
   };
 
+export const createPrivateChannel = (id, user1, user2) => async (dispatch) => {
+  try {
+    dispatch({
+      type: CREATE_CHANNEL_REQUEST,
+    });
+
+    const db = getDatabase();
+
+    const newChannel = {
+      id,
+      user1,
+      user2,
+    };
+    console.log(newChannel);
+
+    await set(ref(db, "private-channels/" + id), newChannel);
+
+    dispatch({
+      type: CREATE_CHANNEL_SUCCESS,
+      payload: true,
+    });
+  } catch (err) {
+    dispatch({
+      type: CREATE_CHANNEL_FAIL,
+      payload: err.code,
+    });
+  }
+};
+
 export const getAllChannels = () => async (dispatch) => {
   try {
     dispatch({
@@ -70,27 +101,76 @@ export const getAllChannels = () => async (dispatch) => {
   }
 };
 
-export const getCurrentChannel = (id) => async (dispatch) => {
+export const getCurrentChannel =
+  (id, isPrivate = false) =>
+  async (dispatch) => {
+    try {
+      dispatch({
+        type: GET_CURRENT_CHANNEL_REQUEST,
+      });
+
+      let channel;
+      if (isPrivate) {
+        const dbRef = ref(getDatabase());
+        const snapshot = await get(child(dbRef, "private-channels/" + id));
+        if (snapshot.exists()) {
+          channel = snapshot.val();
+        }
+      } else {
+        const dbRef = ref(getDatabase());
+        const snapshot = await get(child(dbRef, "channels/" + id));
+        if (snapshot.exists()) {
+          channel = snapshot.val();
+        }
+      }
+
+      dispatch({
+        type: GET_CURRENT_CHANNEL_SUCCESS,
+        payload: channel,
+      });
+
+      if (isPrivate) {
+        dispatch({ type: GET_CURRENT_CHANNEL_SET_PRIVATE });
+      } else {
+        dispatch({ type: GET_CURRENT_CHANNEL_SET_PUBLIC });
+      }
+    } catch (err) {
+      dispatch({
+        type: GET_CURRENT_CHANNEL_FAIL,
+        payload: err.code,
+      });
+    }
+  };
+
+export const getCurrentPrivateChannel = (id, name) => async (dispatch) => {
   try {
     dispatch({
       type: GET_CURRENT_CHANNEL_REQUEST,
     });
 
-    let channel;
-    const dbRef = ref(getDatabase());
-    const snapshot = await get(child(dbRef, "channels/" + id));
-    if (snapshot.exists()) {
-      channel = snapshot.val();
-    }
+    const channel = {
+      id,
+      name,
+    };
 
     dispatch({
       type: GET_CURRENT_CHANNEL_SUCCESS,
       payload: channel,
     });
+    dispatch({ type: GET_CURRENT_CHANNEL_SET_PRIVATE });
   } catch (err) {
     dispatch({
       type: GET_CURRENT_CHANNEL_FAIL,
       payload: err.code,
     });
   }
+};
+
+export const verifyChannel = async (id) => {
+  const dbRef = ref(getDatabase());
+  const snapshot = await get(child(dbRef, "private-channels/" + id));
+  if (!snapshot.val()) {
+    return false;
+  }
+  return true;
 };

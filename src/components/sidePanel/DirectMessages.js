@@ -2,6 +2,11 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Menu, Icon } from "semantic-ui-react";
 import { getAllUsers } from "../../actions/userActions";
+import {
+  verifyChannel,
+  createPrivateChannel,
+  getCurrentChannel,
+} from "../../actions/channelActions";
 
 const DirectMessages = () => {
   const dispatch = useDispatch();
@@ -16,6 +21,23 @@ const DirectMessages = () => {
     dispatch(getAllUsers(userInfo && userInfo.uid));
   }, [dispatch, userInfo]);
 
+  const createPrivateChannelHandler = async (user) => {
+    if (user) {
+      const channelId =
+        userInfo.uid < user.uid
+          ? userInfo.uid + ":" + user.uid
+          : user.uid + ":" + userInfo.uid;
+
+      const isChannel = await verifyChannel(channelId);
+      if (!isChannel) {
+        dispatch(
+          createPrivateChannel(channelId, userInfo.displayName, user.name)
+        );
+      }
+      dispatch(getCurrentChannel(channelId, true));
+    }
+  };
+
   return (
     <Menu.Menu className="menu">
       <Menu.Item>
@@ -29,7 +51,7 @@ const DirectMessages = () => {
           <Menu.Item
             key={user.uid}
             style={{ opacity: 0.7, fontStyle: "italic" }}
-            onClick={() => console.log(user)}
+            onClick={() => createPrivateChannelHandler(user)}
           >
             <Icon
               name="circle"

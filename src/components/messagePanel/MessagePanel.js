@@ -16,7 +16,7 @@ const MessagePanel = () => {
   const { userInfo } = userLogin;
 
   const currentChannel = useSelector((state) => state.currentChannel);
-  const { channel } = currentChannel;
+  const { channel, isPrivate } = currentChannel;
 
   const channelMessages = useSelector((state) => state.channelMessages);
   const { loading, messages } = channelMessages;
@@ -63,8 +63,10 @@ const MessagePanel = () => {
     <>
       <MessagesHeader
         channel={channel && channel}
+        isPrivate={isPrivate}
         messages={messages && messages}
         filter={filterSearchHandler}
+        loggedInUser={userInfo && userInfo}
       />
       <Segment>
         <Comment.Group className="messages">
@@ -75,6 +77,7 @@ const MessagePanel = () => {
       </Segment>
       <MessageForm
         channel={channel && channel}
+        isPrivate={isPrivate}
         userInfo={userInfo && userInfo}
       />
     </>

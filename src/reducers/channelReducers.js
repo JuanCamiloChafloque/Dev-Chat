@@ -9,6 +9,8 @@ import {
   GET_CURRENT_CHANNEL_CLEAR,
   GET_CURRENT_CHANNEL_FAIL,
   GET_CURRENT_CHANNEL_REQUEST,
+  GET_CURRENT_CHANNEL_SET_PRIVATE,
+  GET_CURRENT_CHANNEL_SET_PUBLIC,
   GET_CURRENT_CHANNEL_SUCCESS,
 } from "../constants/channelConstants";
 
@@ -58,7 +60,10 @@ export const getChannelsReducer = (state = { channels: [] }, action) => {
   }
 };
 
-export const getCurrentChannelReducer = (state = { channel: null }, action) => {
+export const getCurrentChannelReducer = (
+  state = { channel: null, isPrivate: false },
+  action
+) => {
   switch (action.type) {
     case GET_CURRENT_CHANNEL_REQUEST:
       return {
@@ -68,6 +73,16 @@ export const getCurrentChannelReducer = (state = { channel: null }, action) => {
       return {
         loading: false,
         channel: action.payload,
+      };
+    case GET_CURRENT_CHANNEL_SET_PRIVATE:
+      return {
+        ...state,
+        isPrivate: true,
+      };
+    case GET_CURRENT_CHANNEL_SET_PUBLIC:
+      return {
+        ...state,
+        isPrivate: false,
       };
     case GET_CURRENT_CHANNEL_FAIL:
       return {
