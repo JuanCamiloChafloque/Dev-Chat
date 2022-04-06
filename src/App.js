@@ -15,6 +15,9 @@ const App = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const currentChannel = useSelector((state) => state.currentChannel);
+  const { channel, isPrivate } = currentChannel;
+
   useEffect(() => {
     if (!userInfo) {
       navigate("/login");
@@ -29,7 +32,11 @@ const App = () => {
         <MessagePanel />
       </Grid.Column>
       <Grid.Column width={4}>
-        <MetaPanel />
+        <MetaPanel
+          key={channel && channel.id}
+          isPrivate={isPrivate}
+          channel={channel}
+        />
       </Grid.Column>
     </Grid>
   );
