@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Header, Segment, Input, Icon } from "semantic-ui-react";
 
-const MessagesHeader = ({ channel, messages }) => {
+const MessagesHeader = ({ channel, messages, filter }) => {
   const [users, setUsers] = useState(0);
 
   useEffect(() => {
@@ -36,6 +36,7 @@ const MessagesHeader = ({ channel, messages }) => {
           icon="search"
           name="searchTerm"
           placeholder="Search Messages"
+          onChange={filter}
         />
       </Header>
     </Segment>
