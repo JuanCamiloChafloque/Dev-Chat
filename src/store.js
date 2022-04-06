@@ -10,8 +10,11 @@ import {
 } from "./reducers/userReducers";
 import {
   channelCreateReducer,
+  starChannelReducer,
+  unstarChannelReducer,
   getChannelsReducer,
   getCurrentChannelReducer,
+  getStarredChannelsReducer,
 } from "./reducers/channelReducers";
 import {
   messageCreateReducer,
@@ -22,7 +25,10 @@ const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   channelCreate: channelCreateReducer,
+  starChannel: starChannelReducer,
+  unstarChannel: unstarChannelReducer,
   getChannels: getChannelsReducer,
+  getStarred: getStarredChannelsReducer,
   currentChannel: getCurrentChannelReducer,
   messageCreate: messageCreateReducer,
   channelMessages: getChannelMessagesReducer,

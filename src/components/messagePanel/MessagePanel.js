@@ -77,7 +77,6 @@ const MessagePanel = () => {
       </Segment>
       <MessageForm
         channel={channel && channel}
-        isPrivate={isPrivate}
         userInfo={userInfo && userInfo}
       />
     </>

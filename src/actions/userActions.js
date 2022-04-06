@@ -15,6 +15,7 @@ import {
 import {
   GET_CHANNELS_CLEAR,
   GET_CURRENT_CHANNEL_CLEAR,
+  GET_STARRED_CHANNELS_CLEAR,
 } from "../constants/channelConstants";
 import { GET_MESSAGES_FROM_CHANNEL_CLEAR } from "../constants/messageConstants";
 import {
@@ -141,6 +142,9 @@ export const logout = (user) => async (dispatch) => {
   });
   dispatch({
     type: GET_CHANNELS_CLEAR,
+  });
+  dispatch({
+    type: GET_STARRED_CHANNELS_CLEAR,
   });
   dispatch({
     type: GET_CURRENT_CHANNEL_CLEAR,

@@ -4,7 +4,7 @@ import { Segment, Button, Input } from "semantic-ui-react";
 import { createMessage } from "../../actions/messageActions";
 import FileModal from "./FileModal";
 
-const MessageForm = ({ channel, isPrivate, userInfo }) => {
+const MessageForm = ({ channel, userInfo }) => {
   const dispatch = useDispatch();
 
   const [message, setMessage] = useState("");

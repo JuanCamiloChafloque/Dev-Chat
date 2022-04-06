@@ -17,6 +17,9 @@ const DirectMessages = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const currentChannel = useSelector((state) => state.currentChannel);
+  const { channel } = currentChannel;
+
   useEffect(() => {
     dispatch(getAllUsers(userInfo && userInfo.uid));
   }, [dispatch, userInfo]);

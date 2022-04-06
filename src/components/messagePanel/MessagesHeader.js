@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Header, Segment, Input, Icon } from "semantic-ui-react";
+import {
+  starAChannel,
+  unstarAChannel,
+  verifyStarred,
+} from "../../actions/channelActions";
 
 const MessagesHeader = ({
   channel,
@@ -8,8 +14,17 @@ const MessagesHeader = ({
   filter,
   loggedInUser,
 }) => {
+  const dispatch = useDispatch();
+
   const [users, setUsers] = useState(0);
   const [myName, setMyName] = useState("");
+  const [isStarred, setIsStarred] = useState(false);
+
+  const starChannel = useSelector((state) => state.starChannel);
+  const { success } = starChannel;
+
+  const unstarChannel = useSelector((state) => state.unstarChannel);
+  const { success: removed } = unstarChannel;
 
   useEffect(() => {
     const countUsers = () => {
@@ -42,9 +57,31 @@ const MessagesHeader = ({
       }
     };
 
+    const isStarred = async () => {
+      if (loggedInUser && channel) {
+        const isStarred = await verifyStarred(loggedInUser.uid, channel.id);
+        if (isStarred) {
+          setIsStarred(true);
+        } else {
+          setIsStarred(false);
+        }
+      }
+    };
+
+    isStarred();
     setName();
     countUsers();
-  }, [messages, isPrivate, channel, loggedInUser]);
+  }, [messages, isPrivate, channel, loggedInUser, isStarred, success, removed]);
+
+  const starChannelHandler = () => {
+    if (loggedInUser && channel) {
+      if (isStarred) {
+        dispatch(unstarAChannel(loggedInUser.uid, channel.id));
+      } else {
+        dispatch(starAChannel(loggedInUser.uid, channel));
+      }
+    }
+  };
 
   return (
     <Segment clearing>
@@ -53,7 +90,13 @@ const MessagesHeader = ({
           {channel && isPrivate ? "@" : "#"}
           {channel && isPrivate && myName}
           {channel && !isPrivate && channel.name}
-          {!isPrivate && <Icon name={"star outline"} color="black" />}
+          {!isPrivate && (
+            <Icon
+              name={isStarred ? "star" : "star outline"}
+              color={isStarred ? "yellow" : "black"}
+              onClick={starChannelHandler}
+            />
+          )}
         </span>
         <Header.Subheader>{users} users</Header.Subheader>
       </Header>
