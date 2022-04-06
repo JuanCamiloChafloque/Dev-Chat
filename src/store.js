@@ -3,7 +3,11 @@ import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 
 //User Reducers
-import { userLoginReducer, userRegisterReducer } from "./reducers/userReducers";
+import {
+  userLoginReducer,
+  userRegisterReducer,
+  getUsersReducer,
+} from "./reducers/userReducers";
 import {
   channelCreateReducer,
   getChannelsReducer,
@@ -22,6 +26,7 @@ const reducer = combineReducers({
   currentChannel: getCurrentChannelReducer,
   messageCreate: messageCreateReducer,
   channelMessages: getChannelMessagesReducer,
+  getUsers: getUsersReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

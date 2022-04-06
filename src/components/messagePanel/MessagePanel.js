@@ -9,7 +9,7 @@ import { getChannelMessages } from "../../actions/messageActions";
 const MessagePanel = () => {
   const dispatch = useDispatch();
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(null);
   const [filteredResults, setFilteredResults] = useState([]);
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -29,7 +29,10 @@ const MessagePanel = () => {
     const filteredMessages = [...messages];
     const regex = new RegExp(search, "gi");
     const searchResults = filteredMessages.reduce((acc, message) => {
-      if (message.content && message.content.match(regex)) {
+      if (
+        (message.content && message.content.match(regex)) ||
+        message.user.name.match(regex)
+      ) {
         acc.push(message);
       }
       return acc;
@@ -65,7 +68,7 @@ const MessagePanel = () => {
       />
       <Segment>
         <Comment.Group className="messages">
-          {search !== ""
+          {search
             ? displayMessages(filteredResults)
             : displayMessages(messages)}
         </Comment.Group>

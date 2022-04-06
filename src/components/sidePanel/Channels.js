@@ -60,7 +60,7 @@ const Channels = () => {
         <Spinner />
       ) : (
         <>
-          <Menu.Menu>
+          <Menu.Menu className="menu">
             <Menu.Item>
               <span>
                 <Icon name="exchange" /> CHANNELS

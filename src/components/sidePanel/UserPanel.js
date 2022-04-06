@@ -30,7 +30,7 @@ const UserPanel = () => {
   ];
 
   const logoutHandler = () => {
-    dispatch(logout());
+    dispatch(logout(userInfo));
   };
 
   return (

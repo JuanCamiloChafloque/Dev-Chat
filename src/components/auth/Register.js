@@ -39,6 +39,7 @@ const Register = () => {
     setMessage(null);
     if (isFormValid()) {
       dispatch(register(username, email, password));
+      navigate("/login");
     }
   };
 
