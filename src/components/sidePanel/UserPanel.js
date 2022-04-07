@@ -1,13 +1,10 @@
 import React from "react";
 import { Dropdown, Grid, Header, Icon, Image } from "semantic-ui-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { logout } from "../../actions/userActions";
 
-const UserPanel = () => {
+const UserPanel = ({ userInfo }) => {
   const dispatch = useDispatch();
-
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
 
   const dropdownOptions = () => [
     {

@@ -5,7 +5,14 @@ import Channels from "./Channels";
 import DirectMessages from "./DirectMessages";
 import Starred from "./Starred";
 
-const SidePanel = () => {
+const SidePanel = ({
+  userInfo,
+  starred,
+  channel,
+  loadingChannels,
+  channels,
+  users,
+}) => {
   return (
     <Menu
       size="large"
@@ -15,10 +22,15 @@ const SidePanel = () => {
       style={{ background: "#4c3c4c", fontSize: "1.2rem" }}
       className="sidepanel__menu"
     >
-      <UserPanel />
-      <Starred />
-      <Channels />
-      <DirectMessages />
+      <UserPanel userInfo={userInfo} />
+      <Starred starred={starred} channel={channel} />
+      <Channels
+        userInfo={userInfo}
+        loadingChannels={loadingChannels}
+        channels={channels}
+        channel={channel}
+      />
+      <DirectMessages userInfo={userInfo} users={users} />
     </Menu>
   );
 };

@@ -1,35 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Icon, Menu, Modal, Form, Input, Button } from "semantic-ui-react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import Spinner from "../utils/Spinner";
-import {
-  createChannel,
-  getAllChannels,
-  getCurrentChannel,
-} from "../../actions/channelActions";
+import { createChannel, getCurrentChannel } from "../../actions/channelActions";
 
-const Channels = () => {
+const Channels = ({ userInfo, loadingChannels, channels, channel }) => {
   const dispatch = useDispatch();
 
   const [modal, setModal] = useState(false);
   const [channelName, setChannelName] = useState("");
   const [channelDetails, setChannelDetails] = useState("");
-
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
-  const channelCreate = useSelector((state) => state.channelCreate);
-  const { success } = channelCreate;
-
-  const getChannels = useSelector((state) => state.getChannels);
-  const { loading, channels } = getChannels;
-
-  const currentChannel = useSelector((state) => state.currentChannel);
-  const { channel } = currentChannel;
-
-  useEffect(() => {
-    dispatch(getAllChannels());
-  }, [dispatch, success]);
 
   const currentChannelHandler = (id) => {
     dispatch(getCurrentChannel(id));
@@ -56,7 +36,7 @@ const Channels = () => {
 
   return (
     <>
-      {loading ? (
+      {loadingChannels ? (
         <Spinner />
       ) : (
         <>

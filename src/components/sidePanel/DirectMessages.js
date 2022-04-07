@@ -1,28 +1,14 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { Menu, Icon } from "semantic-ui-react";
-import { getAllUsers } from "../../actions/userActions";
 import {
   verifyChannel,
   createPrivateChannel,
   getCurrentChannel,
 } from "../../actions/channelActions";
 
-const DirectMessages = () => {
+const DirectMessages = ({ userInfo, users }) => {
   const dispatch = useDispatch();
-
-  const getUsers = useSelector((state) => state.getUsers);
-  const { users } = getUsers;
-
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
-  const currentChannel = useSelector((state) => state.currentChannel);
-  const { channel } = currentChannel;
-
-  useEffect(() => {
-    dispatch(getAllUsers(userInfo && userInfo.uid));
-  }, [dispatch, userInfo]);
 
   const createPrivateChannelHandler = async (user) => {
     if (user) {

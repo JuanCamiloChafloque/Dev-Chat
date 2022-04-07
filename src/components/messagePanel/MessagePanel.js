@@ -1,28 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
 import { Segment, Comment } from "semantic-ui-react";
 import MessageForm from "./MessageForm";
 import MessagesHeader from "./MessagesHeader";
 import Message from "./Message";
-import { getChannelMessages } from "../../actions/messageActions";
 
-const MessagePanel = () => {
-  const dispatch = useDispatch();
-
+const MessagePanel = ({
+  userInfo,
+  channel,
+  isPrivate,
+  messages,
+  loadingMessages,
+  successFavorite,
+  successUnfavorite,
+}) => {
   const [search, setSearch] = useState(null);
   const [filteredResults, setFilteredResults] = useState([]);
-
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
-  const currentChannel = useSelector((state) => state.currentChannel);
-  const { channel, isPrivate } = currentChannel;
-
-  const channelMessages = useSelector((state) => state.channelMessages);
-  const { loading, messages } = channelMessages;
-
-  const messageCreate = useSelector((state) => state.messageCreate);
-  const { success } = messageCreate;
 
   const filterSearchHandler = (e) => {
     setSearch(e.target.value);
@@ -47,17 +39,11 @@ const MessagePanel = () => {
           key={message.timestamp}
           message={message}
           user={userInfo}
-          loading={loading}
+          loading={loadingMessages}
         />
       ));
     }
   };
-
-  useEffect(() => {
-    if (channel) {
-      dispatch(getChannelMessages(channel.id));
-    }
-  }, [channel, dispatch, success]);
 
   return (
     <>
@@ -67,6 +53,8 @@ const MessagePanel = () => {
         messages={messages && messages}
         filter={filterSearchHandler}
         loggedInUser={userInfo && userInfo}
+        successFavorite={successFavorite}
+        successUnfavorite={successUnfavorite}
       />
       <Segment>
         <Comment.Group className="messages">

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import {
   Segment,
   Accordion,
@@ -9,12 +8,9 @@ import {
   List,
 } from "semantic-ui-react";
 
-const MetaPanel = ({ isPrivate, channel }) => {
+const MetaPanel = ({ isPrivate, channel, messages }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [posters, setPosters] = useState({});
-
-  const channelMessages = useSelector((state) => state.channelMessages);
-  const { messages } = channelMessages;
 
   useEffect(() => {
     const topPosters = () => {
@@ -33,7 +29,6 @@ const MetaPanel = ({ isPrivate, channel }) => {
         setPosters(posters);
       }
     };
-
     topPosters();
   }, [messages]);
 

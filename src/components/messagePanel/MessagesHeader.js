@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Header, Segment, Input, Icon } from "semantic-ui-react";
 import {
   starAChannel,
@@ -13,18 +13,14 @@ const MessagesHeader = ({
   messages,
   filter,
   loggedInUser,
+  successFavorite,
+  successUnfavorite,
 }) => {
   const dispatch = useDispatch();
 
   const [users, setUsers] = useState(0);
   const [myName, setMyName] = useState("");
   const [isStarred, setIsStarred] = useState(false);
-
-  const starChannel = useSelector((state) => state.starChannel);
-  const { success } = starChannel;
-
-  const unstarChannel = useSelector((state) => state.unstarChannel);
-  const { success: removed } = unstarChannel;
 
   useEffect(() => {
     const countUsers = () => {
@@ -71,7 +67,15 @@ const MessagesHeader = ({
     isStarred();
     setName();
     countUsers();
-  }, [messages, isPrivate, channel, loggedInUser, isStarred, success, removed]);
+  }, [
+    messages,
+    isPrivate,
+    channel,
+    loggedInUser,
+    isStarred,
+    successFavorite,
+    successUnfavorite,
+  ]);
 
   const starChannelHandler = () => {
     if (loggedInUser && channel) {

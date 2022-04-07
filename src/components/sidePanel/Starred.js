@@ -1,34 +1,10 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useDispatch } from "react-redux";
 import { Menu, Icon } from "semantic-ui-react";
-import {
-  getStarredChannels,
-  getCurrentChannel,
-} from "../../actions/channelActions";
+import { getCurrentChannel } from "../../actions/channelActions";
 
-const Starred = () => {
+const Starred = ({ starred, channel }) => {
   const dispatch = useDispatch();
-
-  const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
-
-  const starChannel = useSelector((state) => state.starChannel);
-  const { success } = starChannel;
-
-  const unstarChannel = useSelector((state) => state.unstarChannel);
-  const { success: removed } = unstarChannel;
-
-  const getStarred = useSelector((state) => state.getStarred);
-  const { starred } = getStarred;
-
-  const currentChannel = useSelector((state) => state.currentChannel);
-  const { channel } = currentChannel;
-
-  useEffect(() => {
-    if (userInfo) {
-      dispatch(getStarredChannels(userInfo.uid));
-    }
-  }, [dispatch, success, removed, userInfo]);
 
   const currentChannelHandler = (id) => {
     dispatch(getCurrentChannel(id));
