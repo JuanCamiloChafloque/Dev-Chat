@@ -15,6 +15,7 @@ const MessagesHeader = ({
   loggedInUser,
   successFavorite,
   successUnfavorite,
+  loadingMessages,
 }) => {
   const dispatch = useDispatch();
 
@@ -88,32 +89,41 @@ const MessagesHeader = ({
   };
 
   return (
-    <Segment clearing>
-      <Header fluid="true" as="h2" floated="left" style={{ marginBottom: 0 }}>
-        <span>
-          {channel && isPrivate ? "@" : "#"}
-          {channel && isPrivate && myName}
-          {channel && !isPrivate && channel.name}
-          {!isPrivate && (
-            <Icon
-              name={isStarred ? "star" : "star outline"}
-              color={isStarred ? "yellow" : "black"}
-              onClick={starChannelHandler}
+    <>
+      {loadingMessages ? null : (
+        <Segment clearing>
+          <Header
+            fluid="true"
+            as="h2"
+            floated="left"
+            style={{ marginBottom: 0 }}
+          >
+            <span>
+              {channel && isPrivate ? "@" : "#"}
+              {channel && isPrivate && myName}
+              {channel && !isPrivate && channel.name}
+              {!isPrivate && (
+                <Icon
+                  name={isStarred ? "star" : "star outline"}
+                  color={isStarred ? "yellow" : "black"}
+                  onClick={starChannelHandler}
+                />
+              )}
+            </span>
+            <Header.Subheader>{users} users</Header.Subheader>
+          </Header>
+          <Header floated="right">
+            <Input
+              size="mini"
+              icon="search"
+              name="searchTerm"
+              placeholder="Search Messages"
+              onChange={filter}
             />
-          )}
-        </span>
-        <Header.Subheader>{users} users</Header.Subheader>
-      </Header>
-      <Header floated="right">
-        <Input
-          size="mini"
-          icon="search"
-          name="searchTerm"
-          placeholder="Search Messages"
-          onChange={filter}
-        />
-      </Header>
-    </Segment>
+          </Header>
+        </Segment>
+      )}
+    </>
   );
 };
 
