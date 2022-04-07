@@ -69,7 +69,6 @@ export const createPrivateChannel = (id, user1, user2) => async (dispatch) => {
       user1,
       user2,
     };
-    console.log(newChannel);
 
     await set(ref(db, "private-channels/" + id), newChannel);
 

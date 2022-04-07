@@ -7,6 +7,9 @@ import {
   userLoginReducer,
   userRegisterReducer,
   getUsersReducer,
+  userAppColorsReducer,
+  getColorsReducer,
+  setColorReducer,
 } from "./reducers/userReducers";
 import {
   channelCreateReducer,
@@ -24,6 +27,9 @@ import {
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
+  userColors: userAppColorsReducer,
+  getColors: getColorsReducer,
+  color: setColorReducer,
   channelCreate: channelCreateReducer,
   starChannel: starChannelReducer,
   unstarChannel: unstarChannelReducer,
@@ -41,6 +47,7 @@ const userInfoFromStorage = localStorage.getItem("userInfo")
 
 const initialState = {
   userLogin: { userInfo: userInfoFromStorage },
+  color: { primary: "#4c3c4c", secondary: "#eee" },
 };
 
 const middleware = [thunk];

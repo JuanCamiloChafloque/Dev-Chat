@@ -3,7 +3,7 @@ import { Dropdown, Grid, Header, Icon, Image } from "semantic-ui-react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../actions/userActions";
 
-const UserPanel = ({ userInfo }) => {
+const UserPanel = ({ userInfo, color }) => {
   const dispatch = useDispatch();
 
   const dropdownOptions = () => [
@@ -31,7 +31,7 @@ const UserPanel = ({ userInfo }) => {
   };
 
   return (
-    <Grid style={{ background: "#4c3c4c" }}>
+    <Grid style={{ background: color ? color.primary : "#4c3c4c" }}>
       <Grid.Column>
         <Grid.Row style={{ padding: "1.2em", margin: 0 }}>
           <Header inverted floated="left" as="h2">

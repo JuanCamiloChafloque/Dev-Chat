@@ -11,11 +11,17 @@ import {
   GET_USERS_REQUEST,
   GET_USERS_SUCCESS,
   GET_USERS_FAIL,
+  USER_COLORS_REQUEST,
+  USER_COLORS_SUCCESS,
+  USER_COLORS_FAIL,
+  USER_GET_COLORS_REQUEST,
+  USER_GET_COLORS_SUCCESS,
+  USER_GET_COLORS_FAIL,
+  SET_COLORS,
 } from "../constants/userConstants";
 import {
   GET_CHANNELS_CLEAR,
   GET_CURRENT_CHANNEL_CLEAR,
-  GET_STARRED_CHANNELS_CLEAR,
 } from "../constants/channelConstants";
 import { GET_MESSAGES_FROM_CHANNEL_CLEAR } from "../constants/messageConstants";
 import {
@@ -25,7 +31,7 @@ import {
   updateProfile,
   signOut,
 } from "firebase/auth";
-import { getDatabase, ref, set, child, get } from "firebase/database";
+import { getDatabase, ref, set, child, get, push } from "firebase/database";
 
 export const login = (email, password) => async (dispatch) => {
   try {
@@ -127,6 +133,71 @@ export const getAllUsers = (loggedInId) => async (dispatch) => {
   }
 };
 
+export const setAppColors =
+  (userId, primary, secondary) => async (dispatch) => {
+    try {
+      dispatch({
+        type: USER_COLORS_REQUEST,
+      });
+
+      const db = getDatabase();
+      const key = push(child(ref(db), "colors")).key;
+
+      const colors = {
+        id: key,
+        primary,
+        secondary,
+      };
+
+      await set(ref(db, "colors/" + userId + "/" + key), colors);
+
+      dispatch({
+        type: USER_COLORS_SUCCESS,
+        payload: true,
+      });
+    } catch (err) {
+      dispatch({
+        type: USER_COLORS_FAIL,
+        payload: err.code,
+      });
+    }
+  };
+
+export const getUserColors = (userId) => async (dispatch) => {
+  try {
+    dispatch({
+      type: USER_GET_COLORS_REQUEST,
+    });
+
+    let colors = [];
+    const dbRef = ref(getDatabase());
+    const snapshot = await get(child(dbRef, "colors/" + userId));
+    if (snapshot.exists()) {
+      colors = Object.keys(snapshot.val()).map((key) => snapshot.val()[key]);
+    }
+
+    dispatch({
+      type: USER_GET_COLORS_SUCCESS,
+      payload: colors,
+    });
+  } catch (err) {
+    dispatch({
+      type: USER_GET_COLORS_FAIL,
+      payload: err.code,
+    });
+  }
+};
+
+export const setColors = (primary, secondary) => async (dispatch) => {
+  dispatch({
+    type: SET_COLORS,
+    payload: {
+      primary,
+      secondary,
+    },
+  });
+};
+
 export const logout = (user) => async (dispatch) => {
   const auth = getAuth();
   const db = getDatabase();
@@ -142,9 +213,6 @@ export const logout = (user) => async (dispatch) => {
   });
   dispatch({
     type: GET_CHANNELS_CLEAR,
-  });
-  dispatch({
-    type: GET_STARRED_CHANNELS_CLEAR,
   });
   dispatch({
     type: GET_CURRENT_CHANNEL_CLEAR,
