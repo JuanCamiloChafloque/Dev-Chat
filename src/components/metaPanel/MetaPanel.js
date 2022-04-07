@@ -13,24 +13,28 @@ const MetaPanel = ({ isPrivate, channel, messages }) => {
   const [posters, setPosters] = useState({});
 
   useEffect(() => {
-    const topPosters = () => {
-      if (messages) {
-        const posters = messages.reduce((acc, message) => {
-          if (message.user.name in acc) {
-            acc[message.user.name].count += 1;
-          } else {
-            acc[message.user.name] = {
-              avatar: message.user.avatar,
-              count: 1,
-            };
-          }
-          return acc;
-        }, {});
-        setPosters(posters);
-      }
-    };
-    topPosters();
-  }, [messages]);
+    if (!isPrivate) {
+      const topPosters = () => {
+        if (messages) {
+          const posters = messages.reduce((acc, message) => {
+            if (message.user.name in acc) {
+              acc[message.user.name].count += 1;
+            } else {
+              acc[message.user.name] = {
+                avatar: message.user.avatar,
+                count: 1,
+              };
+            }
+            return acc;
+          }, {});
+          setPosters(posters);
+        }
+      };
+      topPosters();
+    } else {
+      setActiveIndex(10);
+    }
+  }, [messages, isPrivate]);
 
   const setActiveHandler = (prevState) => {
     if (activeIndex === prevState) {
@@ -100,8 +104,11 @@ const MetaPanel = ({ isPrivate, channel, messages }) => {
             </Accordion.Title>
             <Accordion.Content active={activeIndex === 2}>
               <Header as="h3">
-                <Image circular src={channel && channel.createdBy.avatar} />
-                {channel && channel.createdBy.name}
+                <Image
+                  circular
+                  src={channel && channel.createdBy && channel.createdBy.avatar}
+                />
+                {channel && channel.createdBy && channel.createdBy.name}
               </Header>
             </Accordion.Content>
           </Accordion>

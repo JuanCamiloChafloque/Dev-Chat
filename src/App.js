@@ -74,13 +74,13 @@ const App = () => {
     }
   }, [userInfo, dispatch, successColors]);
 
-  //TODO: Puede que el channel dependa
   useEffect(() => {
     if (userInfo) {
       dispatch(getAllUsers(userInfo.uid));
     }
   }, [dispatch, userInfo]);
 
+  //TODO: Set first channel to default
   useEffect(() => {
     dispatch(getAllChannels());
   }, [dispatch, successCreate]);
@@ -125,7 +125,6 @@ const App = () => {
         />
       </Grid.Column>
       <Grid.Column width={4}>
-        {/* TODO: Revisar porque da error cuando accedo a un canal privado */}
         <MetaPanel
           key={channel && channel.name}
           messages={messages}
