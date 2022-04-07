@@ -48,6 +48,7 @@ const userInfoFromStorage = localStorage.getItem("userInfo")
 const initialState = {
   userLogin: { userInfo: userInfoFromStorage },
   color: { primary: "#4c3c4c", secondary: "#eee" },
+  getChannels: { channels: [] },
 };
 
 const middleware = [thunk];

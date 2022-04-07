@@ -80,7 +80,6 @@ const App = () => {
     }
   }, [dispatch, userInfo]);
 
-  //TODO: Set first channel to default
   useEffect(() => {
     dispatch(getAllChannels());
   }, [dispatch, successCreate]);

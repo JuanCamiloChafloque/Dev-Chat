@@ -142,6 +142,10 @@ export const getAllChannels = () => async (dispatch) => {
     const snapshot = await get(child(dbRef, "channels/"));
     if (snapshot.exists()) {
       channels = Object.keys(snapshot.val()).map((key) => snapshot.val()[key]);
+      dispatch({
+        type: GET_CURRENT_CHANNEL_SUCCESS,
+        payload: channels[0],
+      });
     }
 
     dispatch({
